@@ -12,8 +12,13 @@ import (
 	"github.com/RasmusLindroth/go-mastodon"
 )
 
-func links(ctx context.Context) (chan string, error) {
-	linksChan := make(chan string, 1024)
+type linkMeta struct {
+	link string
+	from string
+}
+
+func links(ctx context.Context) (chan linkMeta, error) {
+	linksChan := make(chan linkMeta, 1024)
 
 	masto := mastodon.NewClient(&mastodon.Config{
 		Server:       "https://owo.cafe",
@@ -61,7 +66,10 @@ func links(ctx context.Context) (chan string, error) {
 
 			log.Printf("%s: %s", status.Account.URL, link)
 
-			linksChan <- link
+			linksChan <- linkMeta{
+				link: link,
+				from: status.Account.Username,
+			}
 		}
 	}()
 

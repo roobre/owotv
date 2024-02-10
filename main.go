@@ -6,9 +6,10 @@ import (
 	"time"
 )
 
-const minDisplayTime = 30 * time.Second
-
 func main() {
+	const minDisplayTime = 45 * time.Second
+	admins := []string{"roobre", "moni"}
+
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
@@ -19,24 +20,13 @@ func main() {
 
 	linkChan, err := links(ctx)
 	if err != nil {
-		log.Fatalf(": %v", err)
+		log.Fatalf("getting stream: %v", err)
 	}
 
-	visited := map[string]bool{}
-
-	for link := range linkChan {
-		if visited[link] {
-			log.Printf("%s: already seen, get new material!", link)
-			continue
-		}
-		visited[link] = true
-
-		_, err = firefox.Goto(link)
-		if err != nil {
-			log.Printf("Visiting %q: %v", link, err)
-		}
-
-		time.Sleep(minDisplayTime)
-		log.Println("Ready to load next link")
+	b := bot{
+		minDisplayTime: minDisplayTime,
+		admins:         admins,
 	}
+
+	b.run(playwrightGotoer{firefox}, linkChan)
 }
