@@ -22,7 +22,7 @@ func browser() (playwright.Page, error) {
 	firefox, err := pw.Firefox.Launch(playwright.BrowserTypeLaunchOptions{
 		Headless: playwright.Bool(false),
 		FirefoxUserPrefs: map[string]interface{}{
-			"layout.css.devPixelsPerPx": "1.2",
+			"layout.css.devPixelsPerPx": "2",
 			"media.autoplay.default":    0, // Allowed.
 		},
 	})
